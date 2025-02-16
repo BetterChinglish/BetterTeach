@@ -4,6 +4,7 @@ const router = express.Router();
 
 const { Article } = require('../../models');
 
+// 获取文章列表
 router.get('/', async (req, res, next) => {
   try {
     // 排序
@@ -32,6 +33,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+// 获取文章详情
 router.get('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -54,6 +56,61 @@ router.get('/:id', async (req, res, next) => {
     res.status(code).json({
       status: false,
       message: `获取id为${id}的文章失败`,
+      error: [err.message]
+    });
+  }
+});
+
+// 新增文章
+router.post('/', async (req, res, next) => {
+  try {
+    const { title, content } = req.body;
+    
+    const article = await Article.create({
+      title,
+      content
+    });
+    
+    res.status(201).json({
+      status: true,
+      message: '新增文章成功',
+      data: article
+    });
+    
+  } catch(err) {
+    res.status(err.code || 500).json({
+      status: false,
+      message: '新增文章失败',
+      error: [err.message]
+    });
+  }
+});
+
+
+// 删除文章
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    
+    const article = await Article.findByPk(id);
+    
+    if(!article) {
+      throw new findArticleError(404, `id为${id}的文章不存在`);
+    }
+    
+    await article.destroy();
+    
+    res.json({
+      status: true,
+      message: `删除id为${id}的文章成功`
+    });
+    
+  } catch(err) {
+    const { id } = req.params;
+    const code = err.code || 500;
+    res.status(code).json({
+      status: false,
+      message: `删除id为${id}的文章失败`,
       error: [err.message]
     });
   }
