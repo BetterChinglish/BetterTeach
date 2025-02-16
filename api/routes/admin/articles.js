@@ -116,6 +116,41 @@ router.delete('/:id', async (req, res, next) => {
   }
 });
 
+// 更新文章
+router.put('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { title, content } = req.body;
+    
+    const article = await Article.findByPk(id);
+    
+    if(!article) {
+      throw new findArticleError(404, `id为${id}的文章不存在`);
+    }
+    
+    article.title = title;
+    article.content = content;
+    
+    await article.save();
+    
+    res.json({
+      status: true,
+      message: `更新id为${id}的文章成功`,
+      data: article
+    });
+    
+  } catch(err) {
+    const { id } = req.params;
+    const code = err.code || 500;
+    res.status(code).json({
+      status: false,
+      message: `更新id为${id}的文章失败`,
+      error: [err.message]
+    });
+  }
+});
+
+
 
 class findArticleError extends Error {
   constructor(code, message) {
