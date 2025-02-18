@@ -8,37 +8,47 @@ const {Op} = require("sequelize");
 // 获取文章列表
 router.get('/', async (req, res, next) => {
   try {
+    // 获取查询参数
+    let { title, pageSize, currentPage } = req.query;
     
-    const { query, pageSize, currentPage } = req;
-    
-    // 排序
-    const condition = {
-      order: [
-        ['id','DESC']
-      ],
-    }
- 
-    // 模糊查询title, where title like xxx
-    if(query.title) {
-      condition.where = {
-        title:{
-          [Op.like]: `%${query.title}%`
-        }
-      }
-    }
+    // 处理分页参数与默认值
+    pageSize = Math.abs(parseInt(pageSize) || 10);
+    currentPage = Math.abs(parseInt(currentPage) || 1);
     
     // 分页, limit startOffset, pageSize
     const startOffset = (currentPage - 1) * pageSize;
     
+    // 排序
+    const condition = {
+      order: [
+        ['id', 'ASC']
+      ],
+      limit: pageSize,
+      offset: startOffset
+    }
+ 
+    // 模糊查询title, where title like xxx
+    if(title) {
+      condition.where = {
+        title:{
+          [Op.like]: `%${title}%`
+        }
+      }
+    }
     
     // 查询
-    const articles = await Article.findAll(condition);
+    const { count, rows: data} = await Article.findAndCountAll(condition);
     
     // 返回数据
     res.json({
       status: true,
       message: '获取文章列表成功',
-      data: articles
+      data,
+      pagination: {
+        pageSize,
+        currentPage,
+        total: count
+      }
     });
   } catch(err) {
     // 错误
