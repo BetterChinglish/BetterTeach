@@ -3,16 +3,33 @@ const express = require('express');
 const router = express.Router();
 
 const { Article } = require('../../models');
+const {Op} = require("sequelize");
 
 // 获取文章列表
 router.get('/', async (req, res, next) => {
   try {
+    
+    const { query, pageSize, currentPage } = req;
+    
     // 排序
     const condition = {
       order: [
         ['id','DESC']
-      ]
+      ],
     }
+ 
+    // 模糊查询title, where title like xxx
+    if(query.title) {
+      condition.where = {
+        title:{
+          [Op.like]: `%${query.title}%`
+        }
+      }
+    }
+    
+    // 分页, limit startOffset, pageSize
+    const startOffset = (currentPage - 1) * pageSize;
+    
     
     // 查询
     const articles = await Article.findAll(condition);
