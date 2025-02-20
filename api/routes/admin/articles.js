@@ -5,6 +5,11 @@ const router = express.Router();
 const { Article } = require('../../models');
 const {Op} = require("sequelize");
 
+const {
+  NotFoundError,
+  sendSuccessResponse
+} = require('../../utils/response');
+
 // 获取文章列表
 router.get('/', async (req, res, next) => {
   try {
@@ -37,19 +42,18 @@ router.get('/', async (req, res, next) => {
     }
     
     // 查询
-    const { count, rows: data} = await Article.findAndCountAll(condition);
+    const { count, rows} = await Article.findAndCountAll(condition);
     
-    // 返回数据
-    res.json({
-      status: true,
-      message: '获取文章列表成功',
-      data,
+    const data = {
+      articles: rows,
       pagination: {
         pageSize,
         currentPage,
         total: count
       }
-    });
+    }
+    
+    sendSuccessResponse(res,'获取文章列表成功', data)
   } catch(err) {
     // 错误
     res.status(500).json({
@@ -63,20 +67,9 @@ router.get('/', async (req, res, next) => {
 // 获取文章详情
 router.get('/:id', async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const article = await getArticle(req);
     
-    const article = await Article.findByPk(id);
-    
-    if(!article) {
-      throw new findArticleError( 404, `id为${id}的文章不存在`);
-    }
-    
-    res.json({
-      status: true,
-      message: `获取id为${id}的文章成功`,
-      data: article
-    });
-    
+    sendSuccessResponse(res, `获取id为${id}的文章成功`, article)
   } catch(err) {
     const { id } = req.params;
     const code = err.code || 500;
@@ -99,11 +92,7 @@ router.post('/', async (req, res, next) => {
       content
     });
     
-    res.status(201).json({
-      status: true,
-      message: '新增文章成功',
-      data: article
-    });
+    sendSuccessResponse(res, '新增文章成功', article, 201);
     
   } catch(err) {
     if(err.name === 'SequelizeValidationError') {
@@ -128,20 +117,11 @@ router.post('/', async (req, res, next) => {
 // 删除文章
 router.delete('/:id', async (req, res, next) => {
   try {
-    const { id } = req.params;
-    
-    const article = await Article.findByPk(id);
-    
-    if(!article) {
-      throw new findArticleError(404, `id为${id}的文章不存在`);
-    }
+    const article = await getArticle(req);
     
     await article.destroy();
     
-    res.json({
-      status: true,
-      message: `删除id为${id}的文章成功`
-    });
+    sendSuccessResponse(res, `删除id为${id}的文章成功`)
     
   } catch(err) {
     const { id } = req.params;
@@ -157,25 +137,13 @@ router.delete('/:id', async (req, res, next) => {
 // 更新文章
 router.put('/:id', async (req, res, next) => {
   try {
-    const { id } = req.params;
     const { title, content } = req.body;
     
-    const article = await Article.findByPk(id);
+    const article = await getArticle(req);
     
-    if(!article) {
-      throw new findArticleError(404, `id为${id}的文章不存在`);
-    }
+    await article.update({title, content});
     
-    article.title = title;
-    article.content = content;
-    
-    await article.save();
-    
-    res.json({
-      status: true,
-      message: `更新id为${id}的文章成功`,
-      data: article
-    });
+    sendSuccessResponse(res, `更新id为${id}的文章成功`, article)
     
   } catch(err) {
     const { id } = req.params;
@@ -188,13 +156,17 @@ router.put('/:id', async (req, res, next) => {
   }
 });
 
-
-
-class findArticleError extends Error {
-  constructor(code, message) {
-    super(message);
-    this.code = code;
+async function getArticle(req) {
+  const { id } = req.params;
+  
+  const article = await Article.findByPk(id);
+  
+  if(!article) {
+    throw new NotFoundError(`Id: ${ id } 的文章未找到。`);
   }
+  
+  return article;
 }
+
 
 module.exports = router;
