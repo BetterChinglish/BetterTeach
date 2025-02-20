@@ -91,6 +91,7 @@ router.get('/:id', async (req, res, next) => {
 // 新增文章
 router.post('/', async (req, res, next) => {
   try {
+    // 只接收title与content
     const { title, content } = req.body;
     
     const article = await Article.create({
@@ -105,6 +106,16 @@ router.post('/', async (req, res, next) => {
     });
     
   } catch(err) {
+    if(err.name === 'SequelizeValidationError') {
+      const error = err.errors.map(e => e.message);
+      res.status(400).json({
+        status: false,
+        message: '新增文章失败',
+        error
+      });
+      return;
+    }
+    
     res.status(err.code || 500).json({
       status: false,
       message: '新增文章失败',
