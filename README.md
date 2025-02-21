@@ -1,7 +1,49 @@
-test
+# express项目创建与运行
+安装express脚手架
+```shell
+npm i -g express-generator
+```
+
+然后创建api项目
+```shell
+express --no-view api
+```
+
+进入项目
+```shell
+cd api
+```
+
+安装依赖包
+```shell
+npm i
+```
 
 
-# 模型、迁移与种子
+安装nodemon
+```shell
+npm i nodemon -g
+```
+
+修改package.json的start
+```json
+{
+  "scripts": {
+    "start": "nodemon ./bin/www"
+  }
+}
+```
+
+运行
+```shell
+npm start
+```
+
+
+# ORM
+即数据库关系模型, 相当于一些封装好的方法去操作数据库
+
+安装
 ```shell
 npm i -g sequelize-cli
 
@@ -9,8 +51,9 @@ npm i sequelize mysql2
 
 sequelize init
 ```
+模型、迁移与种子
 
-生成一个文件与三个文件夹
+上述代码将生成一个文件与三个文件夹
 
 > cnfig/config.json
 > 配置文件，用于配置数据库连接
@@ -54,7 +97,7 @@ sequelize db:seed --seed 20250216162405-article
 ```
 
 
-# 接口数据格式
+# 接口数据格式规范设定
 > status
 > 当前接口是否成功
 > > true: 表示成功
@@ -62,7 +105,10 @@ sequelize db:seed --seed 20250216162405-article
 > > false: 表示失败
 > 
 > message
-> > 当前接口的提示信息
+> > 当前接口的提示信息, 对应报文响应状态码
 > 
 > data
 > > 当前接口返回的数据
+> 
+> errors
+> > 数组, 接口返回的错误信息
