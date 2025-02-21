@@ -7,7 +7,8 @@ const {Op} = require("sequelize");
 
 const {
   NotFoundError,
-  sendSuccessResponse
+  sendSuccessResponse,
+  handleFailure
 } = require('../../utils/response');
 
 // 获取文章列表
@@ -55,12 +56,7 @@ router.get('/', async (req, res, next) => {
     
     sendSuccessResponse(res,'获取文章列表成功', data)
   } catch(err) {
-    // 错误
-    res.status(500).json({
-      status: false,
-      message: '获取文章列表失败',
-      error: [err.message]
-    });
+    handleFailure(res, err)
   }
 });
 
@@ -71,13 +67,7 @@ router.get('/:id', async (req, res, next) => {
     
     sendSuccessResponse(res, `获取id为${id}的文章成功`, article)
   } catch(err) {
-    const { id } = req.params;
-    const code = err.code || 500;
-    res.status(code).json({
-      status: false,
-      message: `获取id为${id}的文章失败`,
-      error: [err.message]
-    });
+    handleFailure(res, err)
   }
 });
 
@@ -95,21 +85,7 @@ router.post('/', async (req, res, next) => {
     sendSuccessResponse(res, '新增文章成功', article, 201);
     
   } catch(err) {
-    if(err.name === 'SequelizeValidationError') {
-      const error = err.errors.map(e => e.message);
-      res.status(400).json({
-        status: false,
-        message: '新增文章失败',
-        error
-      });
-      return;
-    }
-    
-    res.status(err.code || 500).json({
-      status: false,
-      message: '新增文章失败',
-      error: [err.message]
-    });
+    handleFailure(res, err)
   }
 });
 
@@ -124,13 +100,7 @@ router.delete('/:id', async (req, res, next) => {
     sendSuccessResponse(res, `删除id为${id}的文章成功`)
     
   } catch(err) {
-    const { id } = req.params;
-    const code = err.code || 500;
-    res.status(code).json({
-      status: false,
-      message: `删除id为${id}的文章失败`,
-      error: [err.message]
-    });
+    handleFailure(res, err)
   }
 });
 
@@ -146,13 +116,7 @@ router.put('/:id', async (req, res, next) => {
     sendSuccessResponse(res, `更新id为${id}的文章成功`, article)
     
   } catch(err) {
-    const { id } = req.params;
-    const code = err.code || 500;
-    res.status(code).json({
-      status: false,
-      message: `更新id为${id}的文章失败`,
-      error: [err.message]
-    });
+    handleFailure(res, err);
   }
 });
 

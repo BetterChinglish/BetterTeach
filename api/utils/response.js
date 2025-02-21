@@ -11,7 +11,7 @@ class NotFoundError extends Error {
 }
 
 /**
- * 请求成功
+ * 请求成功，发送成功响应
  * @param res 响应
  * @param message 成功信息
  * @param data  响应体
@@ -25,7 +25,7 @@ function sendSuccessResponse(res, message, data = {}, code = 200) {
   })
 }
 
-
+// 错误处理
 function handleFailure(res, error) {
   if(error.name === 'SequelizeValidationError') {
     const errors = error.errors.map(e => e.message);
@@ -39,6 +39,7 @@ function handleFailure(res, error) {
   sendErrorResponse(res, '服务器错误', [error.message], 500);
 }
 
+// 发送错误响应
 function sendErrorResponse(res, errorMessage, errorsArr, errorCode) {
   return res.status(errorCode).json({
     status: false,
@@ -51,5 +52,5 @@ function sendErrorResponse(res, errorMessage, errorsArr, errorCode) {
 module.exports = {
   NotFoundError,
   sendSuccessResponse,
-  failure
+  handleFailure
 }
