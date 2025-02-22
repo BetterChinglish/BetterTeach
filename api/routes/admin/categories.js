@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { Article } = require('../../models');
+const { Category } = require('../../models');
 const {Op} = require("sequelize");
 
 const {
@@ -11,11 +11,11 @@ const {
   handleFailure
 } = require('../../utils/response');
 
-// 获取文章列表
+// 获取分类列表
 router.get('/', async (req, res, next) => {
   try {
     // 获取查询参数
-    let { title, pageSize, currentPage } = req.query;
+    let { name, pageSize, currentPage } = req.query;
     
     // 处理分页参数与默认值
     pageSize = Math.abs(parseInt(pageSize) || 10);
@@ -33,20 +33,20 @@ router.get('/', async (req, res, next) => {
       offset: startOffset
     }
  
-    // 模糊查询title, where title like xxx
-    if(title) {
+    // 模糊查询name, where name like xxx
+    if(name) {
       condition.where = {
-        title:{
-          [Op.like]: `%${title}%`
+        name:{
+          [Op.like]: `%${name}%`
         }
       }
     }
     
     // 查询
-    const { count, rows} = await Article.findAndCountAll(condition);
+    const { count, rows} = await Category.findAndCountAll(condition);
     
     const data = {
-      articles: rows,
+      categories: rows,
       pagination: {
         pageSize,
         currentPage,
@@ -54,35 +54,35 @@ router.get('/', async (req, res, next) => {
       }
     }
     
-    sendSuccessResponse(res,'获取文章列表成功', data)
+    sendSuccessResponse(res,'获取分类列表成功', data)
   } catch(err) {
     handleFailure(res, err)
   }
 });
 
-// 获取文章详情
+// 获取分类详情
 router.get('/:id', async (req, res, next) => {
   try {
-    const article = await getArticle(req);
+    const category = await getCategory(req);
     
-    sendSuccessResponse(res, `获取id为${req.params.id}的文章成功`, article)
+    sendSuccessResponse(res, `获取id为${req.params.id}的分类成功`, category)
   } catch(err) {
     handleFailure(res, err)
   }
 });
 
-// 新增文章
+// 新增分类
 router.post('/', async (req, res, next) => {
   try {
-    // 只接收title与content
-    const { title, content } = req.body;
+    // 只接收name与rank
+    const { name, rank } = req.body;
     
-    const article = await Article.create({
-      title,
-      content
+    const category = await Category.create({
+      name,
+      rank
     });
     
-    sendSuccessResponse(res, '新增文章成功', article, 201);
+    sendSuccessResponse(res, '新增分类成功', category, 201);
     
   } catch(err) {
     handleFailure(res, err)
@@ -90,46 +90,47 @@ router.post('/', async (req, res, next) => {
 });
 
 
-// 删除文章
+// 删除分类
 router.delete('/:id', async (req, res, next) => {
   try {
-    const article = await getArticle(req);
+    const category = await getCategory(req);
     
-    await article.destroy();
+    await category.destroy();
     
-    sendSuccessResponse(res, `删除id为${req.params.id}的文章成功`)
+    sendSuccessResponse(res, `删除id为${req.params.id}的分类成功`)
     
   } catch(err) {
     handleFailure(res, err)
   }
 });
 
-// 更新文章
+// 更新分类
 router.put('/:id', async (req, res, next) => {
   try {
-    const { title, content } = req.body;
+    const { name, rank } = req.body;
     
-    const article = await getArticle(req);
+    const category = await getCategory(req);
     
-    await article.update({title, content});
+    await category.update({name, rank});
     
-    sendSuccessResponse(res, `更新id为${req.params.id}的文章成功`, article)
+    sendSuccessResponse(res, `更新id为${req.params.id}的分类成功`, category)
     
   } catch(err) {
     handleFailure(res, err);
   }
 });
 
-async function getArticle(req) {
+async function getCategory(req) {
   const { id } = req.params;
+  console.log(req.params);
+
+  const category = await Category.findByPk(id);
   
-  const article = await Article.findByPk(id);
-  
-  if(!article) {
-    throw new NotFoundError(`Id: ${ id } 的文章未找到。`);
+  if(!category) {
+    throw new NotFoundError(`Id: ${ id } 的分类未找到。`);
   }
   
-  return article;
+  return category;
 }
 
 

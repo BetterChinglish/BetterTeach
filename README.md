@@ -66,7 +66,7 @@ services:
   docker-compose up
 ```
 
-# ORM
+# ORM-sequelize的基本使用
 即数据库关系模型, 相当于一些封装好的方法去操作数据库
 
 安装
