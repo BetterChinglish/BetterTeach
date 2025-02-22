@@ -93,6 +93,34 @@ services:
 > seeders
 > 种子文件夹，用于存放种子文件，其实就是表的初始数据，即增删改查
 
+修改config.json, 配置数据库连接，其中database是数据库名，需要自己先创建一个用于该项目的数据库
+```json
+{
+  "development": {
+    "username": "root",
+    "password": "root",
+    "database": "api_development",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+    "timezone": "+08:00"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "api_development",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "api_development",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
+```
+
 sequelize其实就是生成model, 通过model生成migration和seed文件
 
 然后运行migration与seed文件, 分别进行增删表和增删改查
