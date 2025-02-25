@@ -20,7 +20,9 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         notNull: { msg: '分类ID必须填写。' },
         notEmpty: { msg: '分类ID不能为空。' },
+        // isPresent用于查询实例是否存在
         async isPresent(value) {
+          // 通过主键查询分类是否存在
           const category = await sequelize.models.Category.findByPk(value)
           if (!category) {
             throw new Error(`ID为：${value} 的分类不存在。`);
