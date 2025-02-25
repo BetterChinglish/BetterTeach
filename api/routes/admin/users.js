@@ -35,7 +35,7 @@ router.get('/', async (req, res, next) => {
       offset: startOffset
     }
  
-    // 模糊查询title, where title like xxx
+    // 模糊查询
     if (query.email) {
       condition.where = {
         email: {
@@ -68,7 +68,6 @@ router.get('/', async (req, res, next) => {
         }
       };
     }
-
 
     // 查询
     const { count, rows} = await User.findAndCountAll(condition);
@@ -103,12 +102,9 @@ router.get('/:id', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     // 只接收title与content
-    const { title, content } = req.body;
+    const updateData = filterBody(req);
     
-    const user = await User.create({
-      title,
-      content
-    });
+    const user = await User.create(updateData);
     
     sendSuccessResponse(res, '新增用户成功', user, 201);
     
