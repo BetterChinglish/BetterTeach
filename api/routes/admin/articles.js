@@ -75,12 +75,9 @@ router.get('/:id', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     // 只接收title与content
-    const { title, content } = req.body;
+    const createData = filterBody(req);
     
-    const article = await Article.create({
-      title,
-      content
-    });
+    const article = await Article.create(createData);
     
     sendSuccessResponse(res, '新增文章成功', article, 201);
     
@@ -107,11 +104,11 @@ router.delete('/:id', async (req, res, next) => {
 // 更新文章
 router.put('/:id', async (req, res, next) => {
   try {
-    const { title, content } = req.body;
+    const updateData = filterBody(req);
     
     const article = await getArticle(req);
     
-    await article.update({title, content});
+    await article.update(updateData);
     
     sendSuccessResponse(res, `更新id为${req.params.id}的文章成功`, article)
     
@@ -119,6 +116,13 @@ router.put('/:id', async (req, res, next) => {
     handleFailure(res, err);
   }
 });
+
+function filterBody(req) {
+  return {
+    title: req.body.title,
+    content: req.body.content
+  }
+}
 
 async function getArticle(req) {
   const { id } = req.params;
