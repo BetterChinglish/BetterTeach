@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { Category, Course } = require('../../models');
+const { Category } = require('../../models');
 const {Op} = require("sequelize");
 
 const {
@@ -123,16 +123,7 @@ router.put('/:id', async (req, res, next) => {
 async function getCategory(req) {
   const { id } = req.params;
 
-  const condition = {
-    include: [
-      {
-        model: Course,
-        as: 'courses'
-      }
-    ]
-  }
-
-  const category = await Category.findByPk(id, condition);
+  const category = await Category.findByPk(id);
   
   if(!category) {
     throw new NotFoundError(`Id: ${ id } 的分类未找到。`);
