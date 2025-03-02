@@ -15,11 +15,11 @@ const {
 router.get('/', async (req, res, next) => {
   try {
     // 获取查询参数
-    let { title, pageSize, currentPage } = req.query;
+    const query = req.query;
     
     // 处理分页参数与默认值
-    pageSize = Math.abs(parseInt(pageSize) || 10);
-    currentPage = Math.abs(parseInt(currentPage) || 1);
+    const pageSize = Math.abs(parseInt(query.pageSize) || 10);
+    const currentPage = Math.abs(parseInt(query.currentPage) || 1);
     
     // 分页, limit startOffset, pageSize
     const startOffset = (currentPage - 1) * pageSize;
@@ -34,10 +34,10 @@ router.get('/', async (req, res, next) => {
     }
  
     // 模糊查询title, where title like xxx
-    if(title) {
+    if(query.title) {
       condition.where = {
         title:{
-          [Op.like]: `%${title}%`
+          [Op.like]: `%${query.title}%`
         }
       }
     }
