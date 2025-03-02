@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { Course } = require('../../models');
+const { Course, Category, User } = require('../../models');
 const {Op} = require("sequelize");
 
 const {
@@ -26,6 +26,7 @@ router.get('/', async (req, res, next) => {
 
     // 排序
     const condition = {
+      ...getCondition(),
       order: [
         ['id', 'ASC']
       ],
@@ -173,7 +174,7 @@ function filterBody(req) {
 async function getCourse(req) {
   const { id } = req.params;
 
-  const course = await Course.findByPk(id);
+  const course = await Course.findByPk(id, getCondition());
 
   if(!course) {
     throw new NotFoundError(`Id: ${ id } 的课程未找到。`);
@@ -182,5 +183,24 @@ async function getCourse(req) {
   return course;
 }
 
+const getCondition = () => {
+  return {
+    attributes: {
+      exclude: ['CategoryId', 'UserId']
+    },
+    include: [
+      {
+        model: Category,
+        as: 'category',
+        attributes: ['id', 'name']
+      },
+      {
+        model: User,
+        as: 'user',
+        attributes: ['id', 'username', 'avatar']
+      }
+    ]
+  }
+}
 
 module.exports = router;
