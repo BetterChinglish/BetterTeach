@@ -10,8 +10,12 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      // 这是一种默认规范写法，categoryId直接自动关联categories表的id字段
       models.Course.belongsTo(models.Category, { as: 'category' });
       models.Course.belongsTo(models.User, { as: 'user' });
+
+      models.Course.hasMany(models.Chapter, { as: 'chapters' });
+
     }
   }
   Course.init({

@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { Course, Category, User } = require('../../models');
+const { Course, Category, User, Chapter } = require('../../models');
 const {Op} = require("sequelize");
 
 const {
@@ -128,6 +128,15 @@ router.delete('/:id', async (req, res, next) => {
   try {
     const course = await getCourse(req);
 
+    const count = await Chapter.count({
+      where: {
+        courseId: req.params.id
+      }
+    })
+    // 避免孤儿数据
+    if(count > 0) {
+      throw new Error('该课程下还有章节，不能删除。');
+    }
     await course.destroy();
 
     sendSuccessResponse(res, `删除id为${req.params.id}的课程成功`)

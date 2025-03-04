@@ -27,6 +27,7 @@ router.get('/', async (req, res, next) => {
     // 排序
     const condition = {
       order: [
+        ['rank', 'ASC'],
         ['id', 'ASC']
       ],
       limit: pageSize,
