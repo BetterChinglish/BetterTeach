@@ -37,10 +37,22 @@ router.get('/sex', async function (req, res) {
  */
 router.get('/user', async (req, res) => {
   try {
+    const [results] = await sequelize.query("SELECT DATE_FORMAT(`createdAt`, '%Y-%m') AS `month`, COUNT(*) AS `value` FROM `Users` GROUP BY `month` ORDER BY `month`");
 
-    success(res, '查询每月用户数量成功。', {  });
+    const data = {
+      months: [],
+      values: [],
+    };
+
+    results.forEach(item => {
+      data.months.push(item.month);
+      data.values.push(item.value);
+    });
+
+    sendSuccessResponse(res, '查询每月用户数量成功。', { data });
+
   } catch (error) {
-    failure(res, error);
+    handleFailure(res, error);
   }
 });
 
