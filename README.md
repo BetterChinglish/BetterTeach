@@ -244,3 +244,55 @@ sequelize其实就是生成model, 通过model生成migration和seed文件
 5. 如果存在，判断密码是否正确
 6. 密码正确，还需要判断是否为管理员
 7. 使用jwt签名，生成token
+
+## 7.1 jwt使用
+安装
+```shell
+  npm i jsonwebtoken
+```
+
+使用
+```js
+const token = jwt.sign({
+  data: 'foobar'
+}, 'secret', { expiresIn: '1h' });
+```
+
+第一个参数是个对象，放自己要加密的数据
+
+第二个参数是加密的秘钥
+
+第三个参数是一些配置，这里配置了过期时间expiresIn为1小时
+
+## 使用dotenv在运行进程里存放jwt的加密字符串
+不应该直接写字符串
+```js
+const token = jwt.sign({
+  data: 'foobar'
+}, 'secret', { expiresIn: '1h' });
+```
+
+使用dotenv
+安装
+```shell
+  npm i dotenv
+```
+
+在项目根目录下创建.env文件
+```env
+SECRET=123456
+```
+
+在代码中使用
+```js
+const token = jwt.sign({
+  data: 'foobar'
+}, process.env.SECRET, { expiresIn: '1h' });
+```
+
+## 使用crypto模块生成jwt的加密字符串
+```js
+const crypto = require('crypto');
+console.log(crypto.randomBytes(32).toString('hex'));
+```
+

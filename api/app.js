@@ -3,6 +3,10 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+require('dotenv').config();
+
+const crypto = require('crypto');
+console.log(crypto.randomBytes(32).toString('hex'));
 
 const indexRouter = require('./routes/index');
 const usersRouter = require( './routes/users' );
@@ -15,8 +19,7 @@ const adminUsersRouter = require('./routes/admin/users');
 const adminCoursesRouter = require('./routes/admin/courses');
 const adminChaptersRouter = require('./routes/admin/chapters');
 const adminChartsRouter = require('./routes/admin/charts');
-
-
+const adminAuthRouter = require('./routes/admin/auth');
 
 const app = express();
 
@@ -39,6 +42,7 @@ app.use('/admin/users',  adminUsersRouter);
 app.use('/admin/courses', adminCoursesRouter);
 app.use('/admin/chapters', adminChaptersRouter);
 app.use('/admin/charts', adminChartsRouter);
+app.use('/admin/auth', adminAuthRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
