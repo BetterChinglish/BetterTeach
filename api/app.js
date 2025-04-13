@@ -5,9 +5,6 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 require('dotenv').config();
 
-const crypto = require('crypto');
-console.log(crypto.randomBytes(32).toString('hex'));
-
 const indexRouter = require('./routes/index');
 const usersRouter = require( './routes/users' );
 
