@@ -1,14 +1,6 @@
 
-/*
-* 自定义 404 错误类
-* */
-class NotFoundError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = 'NotFoundError';
-    this.code = 404;
-  }
-}
+const { NotFoundError, BadRequestError, UnauthorizedError } = require('./errors');
+
 
 /**
  * 请求成功，发送成功响应
@@ -35,6 +27,14 @@ function handleFailure(res, error) {
   if(error.name === 'NotFoundError') {
     return sendErrorResponse(res, '资源不存在', [error.message], 404);
   }
+
+  if(error.name === 'BadRequestError') {
+    return sendErrorResponse(res, 'BadRequestError', [error.message], 400);
+  }
+
+  if(error.name === 'UnauthorizedError') {
+    return sendErrorResponse(res, 'UnauthorizedError', [error.message], 401);
+  }
   
   sendErrorResponse(res, '服务器错误', [error.message], 500);
 }
@@ -50,7 +50,7 @@ function sendErrorResponse(res, errorMessage, errorsArr, errorCode) {
 
 
 module.exports = {
-  NotFoundError,
   sendSuccessResponse,
-  handleFailure
+  handleFailure,
+  NotFoundError, BadRequestError, UnauthorizedError
 }
