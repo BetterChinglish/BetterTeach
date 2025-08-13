@@ -8,7 +8,7 @@ const {
   BadRequestError,
   UnauthorizedError,
   NotFoundError
-} = require('../../utils/response');
+} = require('../../utils/responses');
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');

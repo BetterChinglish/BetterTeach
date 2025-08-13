@@ -6,7 +6,7 @@ const {
   NotFoundError,
   sendSuccessResponse,
   handleFailure
-} = require('../../utils/response');
+} = require('../../utils/responses');
 
 /**
  * 统计用户性别-饼图

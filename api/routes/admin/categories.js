@@ -9,7 +9,7 @@ const {
   NotFoundError,
   sendSuccessResponse,
   handleFailure
-} = require('../../utils/response');
+} = require('../../utils/responses');
 
 // 获取分类列表
 router.get('/', async (req, res, next) => {
