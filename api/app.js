@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const adminAuthMiddleware = require('./middlewares/admin-auth');
 require('dotenv').config();
 
 const indexRouter = require('./routes/index');
@@ -32,13 +33,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/admin/articles', adminArticlesRouter);
-app.use('/admin/categories', adminCategoriesRouter);
-app.use('/admin/settings', adminSettingsRouter);
-app.use('/admin/users',  adminUsersRouter);
-app.use('/admin/courses', adminCoursesRouter);
-app.use('/admin/chapters', adminChaptersRouter);
-app.use('/admin/charts', adminChartsRouter);
+
+app.use('/admin/articles', adminAuthMiddleware, adminArticlesRouter);
+app.use('/admin/categories', adminAuthMiddleware, adminCategoriesRouter);
+app.use('/admin/settings', adminAuthMiddleware, adminSettingsRouter);
+app.use('/admin/users', adminAuthMiddleware, adminUsersRouter);
+app.use('/admin/courses', adminAuthMiddleware, adminCoursesRouter);
+app.use('/admin/chapters', adminAuthMiddleware, adminChaptersRouter);
+app.use('/admin/charts', adminAuthMiddleware, adminChartsRouter);
+
 app.use('/admin/auth', adminAuthRouter);
 
 // catch 404 and forward to error handler
