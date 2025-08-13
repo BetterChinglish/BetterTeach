@@ -8,7 +8,7 @@ const {
   NotFoundError,
   sendSuccessResponse,
   handleFailure
-} = require('../../utils/response');
+} = require('../../utils/responses');
 
 
 // 获取系统设置详情
