@@ -35,6 +35,14 @@ function handleFailure(res, error) {
   if(error.name === 'UnauthorizedError') {
     return sendErrorResponse(res, 'UnauthorizedError', [error.message], 401);
   }
+
+  if (error.name === 'JsonWebTokenError') {
+    return sendErrorResponse(res, '认证失败', [error.message], 401);
+  }
+
+  if (error.name === 'TokenExpiredError') {
+    return sendErrorResponse(res, '认证失败', [error.message], 401);
+  }
   
   sendErrorResponse(res, '服务器错误', [error.message], 500);
 }
