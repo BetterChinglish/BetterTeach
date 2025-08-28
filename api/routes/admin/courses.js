@@ -112,6 +112,7 @@ router.post('/', async (req, res, next) => {
   try {
     // 只接收title与content
     const createData = filterBody(req);
+    createData.userId = req.user.id;
 
     const course = await Course.create(createData);
 
@@ -170,7 +171,6 @@ router.put('/:id', async (req, res, next) => {
 function filterBody(req) {
   return {
     categoryId: req.body.categoryId,
-    userId: req.body.userId,
     name: req.body.name,
     image: req.body.image,
     recommended: req.body.recommended,
