@@ -7,6 +7,8 @@ const adminAuthMiddleware = require('./middlewares/admin-auth');
 require('dotenv').config();
 
 const indexRouter = require('./routes/index');
+const categoriesRouter = require('./routes/categories');
+
 const usersRouter = require( './routes/users' );
 
 // 后台路由文件
@@ -32,6 +34,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/categories', categoriesRouter);
 app.use('/users', usersRouter);
 
 app.use('/admin/articles', adminAuthMiddleware, adminArticlesRouter);
