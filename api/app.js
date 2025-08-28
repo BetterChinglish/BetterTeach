@@ -8,6 +8,7 @@ require('dotenv').config();
 
 const indexRouter = require('./routes/index');
 const categoriesRouter = require('./routes/categories');
+const coursesRouter = require('./routes/courses');
 
 const usersRouter = require( './routes/users' );
 
@@ -35,6 +36,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/categories', categoriesRouter);
+app.use('/courses', coursesRouter);
+
 app.use('/users', usersRouter);
 
 app.use('/admin/articles', adminAuthMiddleware, adminArticlesRouter);
