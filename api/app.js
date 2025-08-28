@@ -10,6 +10,7 @@ const indexRouter = require('./routes/index');
 const categoriesRouter = require('./routes/categories');
 const coursesRouter = require('./routes/courses');
 const chaptersRouter = require('./routes/chapters');
+const articlesRouter = require('./routes/articles');
 
 const usersRouter = require( './routes/users' );
 
@@ -39,6 +40,7 @@ app.use('/', indexRouter);
 app.use('/categories', categoriesRouter);
 app.use('/courses', coursesRouter);
 app.use('/chapters', chaptersRouter);
+app.use('/articles', articlesRouter);
 
 app.use('/users', usersRouter);
 
